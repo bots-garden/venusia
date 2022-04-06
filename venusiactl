@@ -17,7 +17,7 @@ Commands:
 - venusiactl delete hey v0.0.0
 - venusiactl download hey v0.0.0
 - venusiactl list
-- venusiactl venusia help
+- venusiactl help
 '
 
 function venusia_publish() {
