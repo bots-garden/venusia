@@ -11,14 +11,15 @@ eval $(cat $(dirname "$0")/venusia.config)
 ---------------------------------------------------
 Venusia is a kind of wasm modules registry
 Commands:
-- procyonctl venusia publish ../hey/hey.wasm hey 0.0.0
-- procyonctl venusia delete hey v0.0.0
-- procyonctl venusia download hey v0.0.0
-- procyonctl venusia list
-- procyonctl venusia help
+- ./venusiactl publish satellites/forty-two/forty-two.wasm forty-two 0.0.0
+  ./venusiactl publish satellites/hello-world-1.0.1/hello-world.wasm forty-two 1.0.1
+  ./venusiactl publish satellites/hello-world-1.0.2/hello-world.wasm forty-two 1.0.2
+- venusiactl delete hey v0.0.0
+- venusiactl download hey v0.0.0
+- venusiactl list
+- venusiactl venusia help
 '
 
-# TODO: something like I did with wapm
 function venusia_publish() {
   wasm_file=$1
   module_name=$2
@@ -46,52 +47,50 @@ function venusia_modules_list() {
   curl ${VENUSIA_URL}/wasm/list
 }
 
-if [[ "$1" == "venusia" ]]; then
 
-  if [[ "$2" == "help" ]]; then
-    echo "🚧 work in progress"
-    exit 0
-  fi
-
-
-  if [[ "$2" == "url" ]]; then
-    echo "🌍 venusia url: ${VENUSIA_URL}"
-    exit 0
-  fi
-
-  if [[ "$2" == "publish" ]]; then
-    wasm_file=$3
-    module_name=$4
-    module_version=$5
-    if [[ "$module_version" == "" ]]; then
-      module_version="default"
-    fi
-    venusia_publish ${wasm_file} ${module_name} ${module_version}
-    exit 0
-  fi
-
-  if [[ "$2" == "list" ]]; then
-    venusia_modules_list
-    exit 0
-  fi
-
-
-  if [[ "$2" == "delete" ]]; then
-    module_name=$3
-    module_version=$4
-    venusia_delete ${module_name}-${module_version}.wasm
-    exit 0
-  fi
-
-  if [[ "$2" == "download" ]]; then
-    module_name=$3
-    module_version=$4
-    if [[ "$module_version" == "" ]]; then
-      module_version="default"
-    fi
-    venusia_download ${module_name}-${module_version}.wasm
-    exit 0
-  fi
-
-  echo "🤔 please try again, I don't understand"
+if [[ "$1" == "help" ]]; then
+  echo "🚧 work in progress"
+  exit 0
 fi
+
+
+if [[ "$1" == "url" ]]; then
+  echo "🌍 venusia url: ${VENUSIA_URL}"
+  exit 0
+fi
+
+if [[ "$1" == "publish" ]]; then
+  wasm_file=$2
+  module_name=$3
+  module_version=$4
+  if [[ "$module_version" == "" ]]; then
+    module_version="default"
+  fi
+  venusia_publish ${wasm_file} ${module_name} ${module_version}
+  exit 0
+fi
+
+if [[ "$1" == "list" ]]; then
+  venusia_modules_list
+  exit 0
+fi
+
+
+if [[ "$1" == "delete" ]]; then
+  module_name=$2
+  module_version=$3
+  venusia_delete ${module_name}-${module_version}.wasm
+  exit 0
+fi
+
+if [[ "$1" == "download" ]]; then
+  module_name=$2
+  module_version=$2
+  if [[ "$module_version" == "" ]]; then
+    module_version="default"
+  fi
+  venusia_download ${module_name}-${module_version}.wasm
+  exit 0
+fi
+
+echo "🤔 please try again, I don't understand"
